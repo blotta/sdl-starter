@@ -3,6 +3,6 @@
 
 vendor/include/*
 vendor/lib/*
-
+vendor/bin/*
 *.dll
 build/*
