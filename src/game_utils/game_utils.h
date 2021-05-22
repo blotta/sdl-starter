@@ -12,6 +12,7 @@ void game_time_init(uint8_t min_fps, void* getMsFunc, void* delayFunc, bool firs
 double game_time_update(bool should_delay);
 double game_deltatime();
 uint32_t game_time_msnow();
+uint16_t game_fps();
 
 
 /////////

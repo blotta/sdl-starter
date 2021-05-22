@@ -88,6 +88,8 @@ int main(int argc, char *argv[])
         char msg_buff[64];
         sprintf_s(msg_buff, 64, "VEL: %f", vec2f_magnitude(&vel));
         draw_text(&font88, msg_buff, 10, 10);
+        sprintf_s(msg_buff, 64, "FPS: %d", game_fps());
+        draw_text(&font88, msg_buff, 10, 20);
 
         // Swap
         SDL_RenderPresent(renderer);
