@@ -4,12 +4,19 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+///////////////
+// game_time //
+///////////////
+
 void game_time_init(uint8_t min_fps, void* getMsFunc, void* delayFunc, bool first_delay);
 double game_time_update(bool should_delay);
 double game_deltatime();
 uint32_t game_time_msnow();
 
-// vec.c
+
+/////////
+// vec //
+/////////
 
 typedef struct {
     float x;
@@ -34,7 +41,9 @@ float vec2f_magnitude(const vec2f* v);
 vec2f* vec2f_normalize(vec2f* v);
 
 
-// move.c
+//////////
+// move //
+//////////
 
 vec2f approach(vec2f* pos, const vec2f* to,
                 float speed, float factor, bool cap_speed);

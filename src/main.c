@@ -5,7 +5,7 @@
 #include <time.h>
 #include <math.h>
 
-#include "game_utils.h"
+#include "game_utils/game_utils.h"
 #include "square.h"
 
 #ifdef __EMSCRIPTEN__

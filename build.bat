@@ -17,7 +17,7 @@ set r_build_dir=build\release
 set target=debug
 set cc=gcc
 set comp_flags=%d_comp_flags%
-set src=src/*.c
+set src=src/*.c src/game_utils/*.c
 set link=-lm -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
 set build_dir=%d_build_dir%
 set include=-Ivendor/include
@@ -30,7 +30,8 @@ if not "%1" == "release" (goto afterTarget)
 
 
 :afterTarget
-set compile_cmd=%cc% %comp_flags% %src% -o %build_dir%\game.exe %include% %lib% %link%
+set executable_path=%build_dir%\game.exe
+set compile_cmd=%cc% %comp_flags% %src% -o %executable_path% %include% %lib% %link%
 
 
 :: Summary
