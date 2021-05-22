@@ -1,8 +1,7 @@
 @echo off
 
-
-@REM echo ONE: "%1"
-@REM echo TWO: "%2"
+:: Example
+set example=follower
 
 :: Debug
 set d_comp_flags=-g -std=c11 -Wall
@@ -17,10 +16,10 @@ set r_build_dir=build\release
 set target=debug
 set cc=gcc
 set comp_flags=%d_comp_flags%
-set src=src/*.c src/game_utils/*.c src/utils/*.c
+set src=src/examples/%example%/*.c src/game_utils/*.c src/utils/*.c
 set link=-lm -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
 set build_dir=%d_build_dir%
-set include=-Ivendor/include
+set include=-Ivendor/include -Isrc/game_utils -Isrc/utils
 set lib=-Lvendor/lib
 
 if not "%1" == "release" (goto afterTarget)

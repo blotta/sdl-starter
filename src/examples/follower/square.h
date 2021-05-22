@@ -1,5 +1,5 @@
 #include <SDL2/SDL.h>
-#include "game_utils/game_utils.h"
+#include "game_utils.h"
 
 typedef struct {
     vec2f pos;
