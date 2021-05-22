@@ -6,6 +6,8 @@
 #include <math.h>
 
 #include "game_utils/game_utils.h"
+#include "utils/utils.h"
+
 #include "square.h"
 
 #ifdef __EMSCRIPTEN__
@@ -79,8 +81,8 @@ int main(int argc, char *argv[])
 
         vec2f vel = approach(&sq.pos, &mouse, sq.speed * delta, factor, false);
 
-        printf("pos %f, %f -- factor %f -- speed %f\n",
-            sq.pos.x, sq.pos.y, factor, vec2f_magnitude(&vel));
+        // printf("pos %f, %f -- factor %f -- speed %f\n",
+        //     sq.pos.x, sq.pos.y, factor, vec2f_magnitude(&vel));
 
         // Render
         SDL_SetRenderDrawColor(renderer, 0, 100, 100, 255);
@@ -91,9 +93,6 @@ int main(int argc, char *argv[])
 
         // Swap
         SDL_RenderPresent(renderer);
-
-        //VSYNC Enabled
-        //SDL_Delay(16);
     }
 
     SDL_DestroyRenderer(renderer);

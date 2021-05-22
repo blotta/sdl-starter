@@ -5,7 +5,7 @@
 @REM echo TWO: "%2"
 
 :: Debug
-set d_comp_flags=-g -std=c11 -Wall -Werror
+set d_comp_flags=-g -std=c11 -Wall
 set d_build_dir=build\debug
 
 :: Release Config
@@ -17,7 +17,7 @@ set r_build_dir=build\release
 set target=debug
 set cc=gcc
 set comp_flags=%d_comp_flags%
-set src=src/*.c src/game_utils/*.c
+set src=src/*.c src/game_utils/*.c src/utils/*.c
 set link=-lm -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
 set build_dir=%d_build_dir%
 set include=-Ivendor/include
