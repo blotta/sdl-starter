@@ -5,8 +5,11 @@
 #include <time.h>
 #include <math.h>
 
-#include "game_utils.h"
 #include "utils.h"
+#include "game_utils.h"
+
+#define SDL_UTILS_FONT_8X8_BASIC
+#include "sdl_utils.h"
 
 #include "square.h"
 
@@ -24,15 +27,15 @@ int main(int argc, char *argv[])
         0);
 
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1,
-        SDL_RENDERER_ACCELERATED);// |
-        // SDL_RENDERER_PRESENTVSYNC);
-
-    // SDL_FRect r = {50.f, 50.f, 100.f, 100.f};
+        SDL_RENDERER_ACCELERATED);
 
     Square sq;
     square_create(&sq, 50.f, 50.f, 0.f, 100.f, 100.f, 400.f);
 
     float factor = 100.f;
+
+    font_t font88;
+    font_create(&font88, renderer, (const char**)FONT_8X8_BASIC, 1, 8, FONT_8X8_BASIC_LENGTH, 0xff, 0xff, 0xff);
 
     // Loop
     int running = 1;
@@ -76,19 +79,21 @@ int main(int argc, char *argv[])
 
         vec2f vel = approach(&sq.pos, &mouse, sq.speed * delta, factor, false);
 
-        // printf("pos %f, %f -- factor %f -- speed %f\n",
-        //     sq.pos.x, sq.pos.y, factor, vec2f_magnitude(&vel));
-
         // Render
         SDL_SetRenderDrawColor(renderer, 0, 100, 100, 255);
         SDL_RenderClear(renderer);
 
         square_draw(&sq, renderer);
 
+        char msg_buff[64];
+        sprintf_s(msg_buff, 64, "VEL: %f", vec2f_magnitude(&vel));
+        draw_text(&font88, msg_buff, 10, 10);
 
         // Swap
         SDL_RenderPresent(renderer);
     }
+
+    font_destroy(&font88);
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

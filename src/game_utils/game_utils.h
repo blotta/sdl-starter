@@ -47,4 +47,18 @@ vec2f* vec2f_normalize(vec2f* v);
 
 vec2f approach(vec2f* pos, const vec2f* to,
                 float speed, float factor, bool cap_speed);
+
+
+/////////////
+// convert //
+/////////////
+
+// Maps each 1 bit to a RGBA pixel of a single color, 0 bit to transparent
+void bits_to_pixels(
+    uint32_t* pixels,
+    const char* bits,
+    uint32_t bytes_per_row,
+    uint32_t row_count,
+    uint8_t r, uint8_t g, uint8_t b);
+
 #endif
