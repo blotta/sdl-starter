@@ -26,7 +26,7 @@ SDL_Texture* data_to_texture(
     for (uint32_t i = 0; i < elem_count; i++)
     {
         uint32_t elem = i * col_count * row_count;
-        bits_to_pixels(&pixel_data[elem], &data[i], bytes_per_row, row_count, r, g, b);
+        bits_to_pixels(&pixel_data[elem], (const char*)&data[i], bytes_per_row, row_count, r, g, b);
     }
     // creating a vertical strip surface of the elements
     // pixel_data holds each row of a character continuously, so vstrip is easier to load

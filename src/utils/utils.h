@@ -1,6 +1,12 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+/////////////
+// general //
+/////////////
+
+void get_build_str(char* str, size_t size);
+
 ////////////////
 // file_utils //
 ////////////////
