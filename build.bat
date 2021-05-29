@@ -3,7 +3,8 @@
 ::::::::: CONFIG :::::::::
 
 :: Example project
-set project_src_dir=src/examples/follower
+:: set project_src_dir=src/examples/follower
+set project_src_dir=src/examples/snake
 
 
 :: Resources folder (use Windows path divisor '\')
@@ -16,7 +17,7 @@ set target=debug
 ::::::: END CONFIG :::::::
 
 :: Debug
-set d_comp_flags=-g -std=c11 -Wall -DDEBUG
+set d_comp_flags=-g -std=c11 -Wall -Wno-unused-variable -DDEBUG
 set d_build_dir=build\debug
 
 :: Release Config
