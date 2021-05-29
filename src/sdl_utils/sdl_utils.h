@@ -53,6 +53,6 @@ void font_create(font_t* out,
 void font_destroy(font_t* font);
 
 // draw text
-void draw_text(font_t* font, const char* str, int32_t x, int32_t y);
+void draw_text(font_t* font, int32_t x, int32_t y, const char* str);
 
 #endif

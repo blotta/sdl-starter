@@ -54,6 +54,10 @@ vec2f approach(vec2f* pos, const vec2f* to,
 // convert //
 /////////////
 
+#ifndef BLT_LITTLE_ENDIAN
+#define BLT_LITTLE_ENDIAN 1
+#endif
+
 // Maps each 1 bit to a RGBA pixel of a single color, 0 bit to transparent
 void bits_to_pixels(
     uint32_t* pixels,

@@ -10,9 +10,15 @@ void bits_to_pixels(
     const uint8_t BITS_IN_BYTE = 8;
 
     uint32_t target_color =
+#ifdef BLT_LITTLE_ENDIAN
+		(r << 0 * BITS_IN_BYTE) |
+		(g << 1 * BITS_IN_BYTE) |
+		(b << 2 * BITS_IN_BYTE);
+#else
 		(r << 3 * BITS_IN_BYTE) |
 		(g << 2 * BITS_IN_BYTE) |
 		(b << 1 * BITS_IN_BYTE);
+#endif
 
 	for (uint32_t row = 0; row < row_count; row++)
 	{
@@ -25,7 +31,11 @@ void bits_to_pixels(
 
 			if ((bits[current_byte] & (1 << (BITS_IN_BYTE - 1 - bit_col))) > 0)
 			{
+#ifdef BLT_LITTLE_ENDIAN
+				pixel = target_color | 0xFF000000;
+#else
 				pixel = target_color | 0xFF;
+#endif
 			}
 
 			pixels[col + row * BITS_IN_BYTE * bytes_per_row] = pixel;

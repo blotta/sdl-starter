@@ -23,7 +23,7 @@ void font_destroy(font_t* font)
 }
 
 // draw text
-void draw_text(font_t* font, const char* str, int32_t x, int32_t y)
+void draw_text(font_t* font, int32_t x, int32_t y, const char* str)
 {
     int w = font->bytes_per_row * 8;
     int h = font->rows_per_character;
