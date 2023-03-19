@@ -1,6 +1,7 @@
+#include <math.h>
 #include "game_utils.h"
 
-vec2f approach(vec2f* pos, const vec2f* to,
+vec2f gu_approach(vec2f* pos, const vec2f* to,
                 float speed, float factor, bool cap_speed)
 {
     vec2f dir;
@@ -19,4 +20,22 @@ vec2f approach(vec2f* pos, const vec2f* to,
     vec2f_add(pos, pos, &vel);
 
     return vel;
+}
+
+
+float gu_lerp_anglef(float from, float to, float speed) {
+    // assuming deg
+    float rFrom = d2r(from);
+    float rTo = d2r(to);
+    float rSpeed = d2r(speed);
+    // float rSpeed = speed;// d2r(speed);
+
+    float c = (1 - rSpeed) * cos(rFrom) + rSpeed * cos(rTo);
+    float s = (1 - rSpeed) * sin(rFrom) + rSpeed * sin(rTo);
+
+    float res = r2d(atan2(s, c));
+    // return fmod(360 - r2d(atan2f(s, c)), 360);
+    // return fmod(360 - r2d(atan2(to->y - from->y, to->x - from->x)), 360);
+
+    return res < 0 ? res + 360 : res;
 }

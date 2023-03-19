@@ -3,8 +3,8 @@
 ::::::::: CONFIG :::::::::
 
 :: Example project
-:: set project_src_dir=src/examples/follower
-set project_src_dir=src/examples/snake
+set project_src_dir=src/examples/wave_shooter
+@REM set project_src_dir=src/examples/snake
 
 
 :: Resources folder (use Windows path divisor '\')

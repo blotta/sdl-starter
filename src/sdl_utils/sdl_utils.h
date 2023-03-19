@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 
 #include <SDL2/SDL.h>
@@ -56,3 +57,37 @@ void font_destroy(font_t* font);
 void draw_text(font_t* font, int32_t x, int32_t y, const char* str);
 
 #endif
+
+
+
+//////////////////
+// INPUT HELPER //
+//////////////////
+void sdlu_input_mapper_init(uint8_t capacity);
+void sdlu_input_mapper_deinit();
+void sdlu_input_mapper_track(SDL_KeyCode kc);
+bool sdlu_input_key_pressed(SDL_KeyCode key);
+bool sdlu_input_key_justpressed(SDL_KeyCode key);
+
+/// @brief
+/// @param btn SDL_BUTTON_LEFT, RIGHT or MIDDLE 
+/// @return 
+bool sdlu_input_mouse_pressed(Uint8 btn);
+
+/// @brief
+/// @param btn SDL_BUTTON_LEFT, RIGHT or MIDDLE 
+/// @return 
+bool sdlu_input_mouse_justpressed(Uint8 btn);
+
+/// @brief
+/// @param btn SDL_BUTTON_LEFT, RIGHT or MIDDLE 
+/// @return 
+bool sdlu_input_mouse_justdoublepressed(Uint8 btn);
+
+/// @brief
+/// @param btn SDL_BUTTON_LEFT, RIGHT or MIDDLE 
+/// @return 
+bool sdlu_input_mouse_justreleased(Uint8 btn);
+
+void sdlu_pollevents();
+bool sdlu_input_requested_quit();

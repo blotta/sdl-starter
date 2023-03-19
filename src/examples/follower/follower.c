@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
         SDL_GetMouseState(&mx, &my);
         vec2f mouse = {mx, my}; 
 
-        vec2f vel = approach(&sq.pos, &mouse, sq.speed * delta, factor, false);
+        vec2f vel = gu_approach(&sq.pos, &mouse, sq.speed * delta, factor, false);
 
         // Render
         SDL_SetRenderDrawColor(renderer, 0, 100, 100, 255);
