@@ -5,6 +5,7 @@
 typedef struct {
     vec2f pos;
     vec2f vel;
+    float rot;
     float lifetime;
 } Bullet;
 
@@ -17,11 +18,15 @@ typedef struct {
     SDL_Texture* tex;
 } BulletPool;
 
+const char bulletFrames[1][8] = {
+    {0x00, 0x00, 0x00, 0x3c, 0x3c, 0x00, 0x00, 0x00}
+};
+
 void bullets_init(BulletPool* bullet_pool, uint32_t capacity, SDL_Renderer* rend)
 {
 
     bullet_pool->capacity = capacity;
-    bullet_pool->speed = 1000.f;
+    bullet_pool->speed = 900.f;
 
     bullet_pool->bullet_lifetime = 1.f;
 
@@ -35,38 +40,7 @@ void bullets_init(BulletPool* bullet_pool, uint32_t capacity, SDL_Renderer* rend
         bullet_pool->bullets[i] = bullet;
     }
 
-
-    Uint32 rmask, gmask, bmask, amask;
-
-    /* SDL interprets each pixel as a 32-bit number, so our masks must depend
-    on the endianness (byte order) of the machine */
-    #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-        rmask = 0xff000000;
-        gmask = 0x00ff0000;
-        bmask = 0x0000ff00;
-        amask = 0x000000ff;
-    #else
-        rmask = 0x000000ff;
-        gmask = 0x0000ff00;
-        bmask = 0x00ff0000;
-        amask = 0xff000000;
-    #endif
-
-    SDL_Surface* surf = SDL_CreateRGBSurface(0, 5, 5, 32, rmask, gmask, bmask, amask);
-    if (surf == NULL) {
-        fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
-        exit(1);
-    }
-
-    SDL_FillRect(surf, NULL, 0xBBBBBBFF);
-
-    bullet_pool->tex = SDL_CreateTextureFromSurface(rend, surf);
-
-    if (bullet_pool->tex == NULL) {
-        fprintf(stderr, "CreateTextureFromSurface failed: %s\n", SDL_GetError());
-        exit(1);
-    }
-    SDL_FreeSurface(surf);
+    bullet_pool->tex = data_to_texture(rend, (const char**)&bulletFrames, 1, 8, 1, 0xFC, 0xBA, 0x03);
 }
 
 void bullets_deinit(BulletPool* bullet_pool) {
@@ -95,6 +69,7 @@ void bullets_update(BulletPool* bullet_pool, vec2f* origin, vec2f* shoot_dir, fl
                 // printf("Shooting!\n");
                 b->pos = (vec2f){.x = origin->x, .y = origin->y};
                 b->vel = VEC2F_ZERO;
+                b->rot = vec2f_point_angle(&b->vel, shoot_dir);
                 vec2f_add(&b->vel, &b->vel, shoot_dir);
                 vec2f_normalize(&b->vel);
                 vec2f_mult_i(&b->vel, &b->vel, bullet_pool->speed);
@@ -117,14 +92,11 @@ void bullets_draw(BulletPool* bullet_pool, SDL_Renderer* rend)
     for (size_t i = 0; i < bullet_pool->capacity; i++) {
         if (bullet_pool->bullets[i].lifetime > 0) {
             SDL_FRect r = {
-                bullet_pool->bullets[i].pos.x,
-                bullet_pool->bullets[i].pos.y,
-                5,
-                5};
-            SDL_RenderCopyF(rend, bullet_pool->tex, NULL, &r);
-
-            // SDL_RenderDrawPointF(rend, bullet_pool->bullets[i].pos.x, bullet_pool->bullets[i].pos.y);
-
+                bullet_pool->bullets[i].pos.x - 8,
+                bullet_pool->bullets[i].pos.y - 8,
+                16,
+                16};
+            SDL_RenderCopyExF(rend, bullet_pool->tex, NULL, &r, bullet_pool->bullets[i].rot, NULL, SDL_FLIP_NONE);
         }
     }
 }

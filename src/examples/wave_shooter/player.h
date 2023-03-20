@@ -7,7 +7,19 @@ typedef struct {
     vec2f size;
     float speed;
     SDL_Texture* tex;
+    SDL_Texture* guntex;
 } Player;
+
+// generated with Pixel Encoder App https://nifty-elion-abf12b.netlify.app/
+#define PLAYER_FRAME_COUNT 1
+const char frames[PLAYER_FRAME_COUNT][8] = {
+    { 0x00, 0x7e, 0x42, 0x76, 0x76, 0x7e, 0x7e, 0x76 },
+};
+
+#define GUN_FRAME_COUNT 1
+const char gunframes[GUN_FRAME_COUNT][8] = {
+    { 0x00, 0x00, 0x00, 0x07, 0x3f, 0x1e, 0x00, 0x00 }
+};
 
 void player_create(Player* player, float px, float py, float rot, float sx, float sy, float speed, SDL_Renderer* rend)
 {
@@ -18,43 +30,31 @@ void player_create(Player* player, float px, float py, float rot, float sx, floa
     player->size.y = sx;
     player->speed = speed;
 
-    Uint32 rmask, gmask, bmask, amask;
-
-    /* SDL interprets each pixel as a 32-bit number, so our masks must depend
-    on the endianness (byte order) of the machine */
-    #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-        rmask = 0xff000000;
-        gmask = 0x00ff0000;
-        bmask = 0x0000ff00;
-        amask = 0x000000ff;
-    #else
-        rmask = 0x000000ff;
-        gmask = 0x0000ff00;
-        bmask = 0x00ff0000;
-        amask = 0xff000000;
-    #endif
-
-    SDL_Surface* surf = SDL_CreateRGBSurface(0, sx, sy, 32, rmask, gmask, bmask, amask);
-    if (surf == NULL) {
-        fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
-        exit(1);
-    }
-
-    SDL_FillRect(surf, NULL, 0xAAAAAAFF);
-
-    player->tex = SDL_CreateTextureFromSurface(rend, surf);
-
-    if (player->tex == NULL) {
-        fprintf(stderr, "CreateTextureFromSurface failed: %s\n", SDL_GetError());
-        exit(1);
-    }
-    SDL_FreeSurface(surf);
+    player->tex = data_to_texture(rend, (const char**)&frames, 1, 8, PLAYER_FRAME_COUNT, 0xAA, 0xAA, 0xAA);
+    player->guntex = data_to_texture(rend, (const char**)&gunframes, 1, 8, GUN_FRAME_COUNT, 0x33, 0x33, 0x33);
 }
 
 void player_draw(Player* player, SDL_Renderer* rend)
 {
+    Uint8 playerflip = SDL_FLIP_NONE;
+    Uint8 gunflip = SDL_FLIP_NONE;
+    if (cos(d2r(player->rot)) < 0) {
+        playerflip = SDL_FLIP_HORIZONTAL;
+        gunflip = SDL_FLIP_VERTICAL;
+    }
+
+    SDL_Rect player_frame = {.x = 0, .y = 0, .w = 8, .h  = 8};
+
     SDL_FRect r = {player->pos.x - player->size.x/2, player->pos.y - player->size.y/2, player->size.x, player->size.y};
-    if(-1 == SDL_RenderCopyExF(rend, player->tex, NULL, &r, player->rot, NULL, SDL_FLIP_NONE)) {
+    if(-1 == SDL_RenderCopyExF(rend, player->tex, &player_frame, &r, 0, NULL, playerflip)) {
+        fprintf(stderr, "SDL_RenderCopyF failed: %s\n", SDL_GetError());
+        exit(1);
+    }
+
+
+    SDL_Rect gun_frame = {.x = 0, .y = 0, .w = 8, .h  = 8};
+    SDL_FRect gun_dest = {player->pos.x - player->size.x/2, player->pos.y - player->size.y/2, player->size.x, player->size.y};
+    if(-1 == SDL_RenderCopyExF(rend, player->guntex, &gun_frame, &gun_dest, player->rot, NULL, gunflip)) {
         fprintf(stderr, "SDL_RenderCopyF failed: %s\n", SDL_GetError());
         exit(1);
     }
