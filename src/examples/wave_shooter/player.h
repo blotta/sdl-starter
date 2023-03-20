@@ -60,3 +60,9 @@ void player_draw(Player* player, SDL_Renderer* rend)
     }
 }
 
+
+void player_destroy(Player* player)
+{
+    SDL_DestroyTexture(player->tex);
+    SDL_DestroyTexture(player->guntex);
+}

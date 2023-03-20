@@ -15,6 +15,7 @@
 
 #include "player.h"
 #include "bullet.h"
+#include "enemy.h"
 
 int main(int argc, char *argv[])
 {
@@ -43,6 +44,9 @@ int main(int argc, char *argv[])
     BulletPool bullet_pool;
     bullets_init(&bullet_pool, 10, renderer);
 
+    Enemy enemy;
+    enemy_create(&enemy, 200.f, 200.f, 0, 24.f, 24.f, 50.f, renderer);
+
     font_t font88;
     font_create(&font88, renderer, (const char**)FONT_8X8_BASIC, 1, 8, FONT_8X8_BASIC_LENGTH, 0xff, 0xff, 0xff);
 
@@ -66,8 +70,6 @@ int main(int argc, char *argv[])
         running = !sdlu_input_requested_quit();
 
         // Update
-        vec2i mouse; 
-        SDL_GetMouseState(&mouse.x, &mouse.y);
 
 
         player_direction = VEC2F_ZERO;
@@ -89,7 +91,11 @@ int main(int argc, char *argv[])
         player.pos.x += vel.x * delta;
         player.pos.y += vel.y * delta;
 
-        float desired_rot = vec2f_point_angle(&player.pos, &(vec2f) {.x = mouse.x, .y = mouse.y});
+        vec2f mouse; 
+        sdlu_input_mouse_pos(&mouse.x, &mouse.y);
+
+        // float desired_rot = vec2f_point_angle(&player.pos, &(vec2f) {.x = mouse.x, .y = mouse.y});
+        float desired_rot = vec2f_point_angle(&player.pos, &mouse);
         // player.rot = desired_rot;
         player.rot = gu_lerp_anglef(player.rot, desired_rot, 1.5 * 360 * delta);
 
@@ -107,21 +113,27 @@ int main(int argc, char *argv[])
 
         bullets_update(&bullet_pool, &bullet_spawn, shoot_dir_ptr, delta);
 
+        // enemies
+        enemy_update(&enemy, &player.pos, delta);
+
         // Render
         SDL_SetRenderDrawColor(renderer, 0, 100, 100, 255);
         SDL_RenderClear(renderer);
 
-        player_draw(&player, renderer);
-        bullets_draw(&bullet_pool, renderer);
 
-        SDL_FRect bsr = {
-            .x = bullet_spawn.x,
-            .y = bullet_spawn.y,
-            .w = 2,
-            .h = 2
-        };
-        SDL_SetRenderDrawColor(renderer, 200, 0, 0, 255);
-        SDL_RenderFillRectF(renderer, &bsr);
+        enemy_draw(&enemy, renderer);
+
+        bullets_draw(&bullet_pool, renderer);
+        player_draw(&player, renderer);
+
+        // SDL_FRect bsr = {
+        //     .x = bullet_spawn.x,
+        //     .y = bullet_spawn.y,
+        //     .w = 2,
+        //     .h = 2
+        // };
+        // SDL_SetRenderDrawColor(renderer, 200, 0, 0, 255);
+        // SDL_RenderFillRectF(renderer, &bsr);
 
         char msg_buff[64];
         sprintf_s(msg_buff, 64, "X: %.2f Y: %.2f ROT: %.2f DESROT: %.2f", player.pos.x, player.pos.y, player.rot, desired_rot);
@@ -133,8 +145,11 @@ int main(int argc, char *argv[])
         SDL_RenderPresent(renderer);
     }
 
-    bullets_deinit(&bullet_pool);
     font_destroy(&font88);
+    bullets_deinit(&bullet_pool);
+    player_destroy(&player);
+    enemy_destroy(&enemy);
+
     sdlu_input_mapper_deinit();
 
     SDL_DestroyRenderer(renderer);

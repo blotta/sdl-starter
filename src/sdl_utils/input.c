@@ -117,6 +117,11 @@ bool sdlu_input_mouse_justreleased(Uint8 btn) {
     return false;
 }
 
+void sdlu_input_mouse_pos(float* x, float* y) {
+    *x = _inputs.mouse.x;
+    *y = _inputs.mouse.y;
+}
+
 
 bool sdlu_input_requested_quit() {
     return _inputs.requested_quit;
@@ -136,6 +141,10 @@ void sdlu_pollevents() {
         _inputs.mouse.buttons[i].just_doublepressed = false;
         _inputs.mouse.buttons[i].just_released = false;
     }
+    int mx, my;
+    SDL_GetMouseState(&mx, &my);
+    _inputs.mouse.x = (float)mx;
+    _inputs.mouse.y = (float)my;
 
     SDL_Event event;
     while(SDL_PollEvent(&event))

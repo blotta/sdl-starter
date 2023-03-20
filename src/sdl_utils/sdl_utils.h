@@ -89,5 +89,7 @@ bool sdlu_input_mouse_justdoublepressed(Uint8 btn);
 /// @return 
 bool sdlu_input_mouse_justreleased(Uint8 btn);
 
+void sdlu_input_mouse_pos(float* x, float* y);
+
 void sdlu_pollevents();
 bool sdlu_input_requested_quit();
