@@ -90,6 +90,11 @@ int main(int argc, char *argv[])
 
         player.pos.x += vel.x * delta;
         player.pos.y += vel.y * delta;
+        if (vec2f_magnitude(&vel) > 0) {
+            player.state = WALKING;
+        } else {
+            player.state = IDLE;
+        } 
 
         vec2f mouse; 
         sdlu_input_mouse_pos(&mouse.x, &mouse.y);
@@ -121,10 +126,10 @@ int main(int argc, char *argv[])
         SDL_RenderClear(renderer);
 
 
-        enemy_draw(&enemy, renderer);
-
-        bullets_draw(&bullet_pool, renderer);
         player_draw(&player, renderer);
+        enemy_draw(&enemy, renderer);
+        bullets_draw(&bullet_pool, renderer);
+
 
         // SDL_FRect bsr = {
         //     .x = bullet_spawn.x,
