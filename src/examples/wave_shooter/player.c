@@ -1,20 +1,10 @@
+#include <stdio.h>
+
 #include <SDL2/SDL.h>
 #include "game_utils.h"
 
-typedef enum {
-    IDLE = 0,
-    WALKING
-} Player_State;
+#include "main.h"
 
-typedef struct {
-    vec2f pos;
-    float rot;
-    vec2f size;
-    float speed;
-    Player_State state;
-    SDL_Texture* tex;
-    SDL_Texture* guntex;
-} Player;
 
 // generated with Pixel Encoder App https://nifty-elion-abf12b.netlify.app/
 #define PLAYER_FRAME_COUNT 1
@@ -59,7 +49,7 @@ void player_draw(Player* player, SDL_Renderer* rend)
 
     SDL_FRect player_dest = {player->pos.x - player->size.x/2, -y_offset + player->pos.y - player->size.y/2, player->size.x, player->size.y};
     if(-1 == SDL_RenderCopyExF(rend, player->tex, &player_frame, &player_dest, 0, NULL, playerflip)) {
-        fprintf(stderr, "SDL_RenderCopyF failed: %s\n", SDL_GetError());
+        printf("SDL_RenderCopyF failed: %s\n", SDL_GetError());
         exit(1);
     }
 
@@ -67,7 +57,7 @@ void player_draw(Player* player, SDL_Renderer* rend)
     SDL_Rect gun_frame = {.x = 0, .y = 0, .w = 8, .h  = 8};
     SDL_FRect gun_dest = {player->pos.x - player->size.x/2, (-y_offset / 2.f) + player->pos.y - player->size.y/2, player->size.x, player->size.y};
     if(-1 == SDL_RenderCopyExF(rend, player->guntex, &gun_frame, &gun_dest, player->rot, NULL, gunflip)) {
-        fprintf(stderr, "SDL_RenderCopyF failed: %s\n", SDL_GetError());
+        printf("SDL_RenderCopyF failed: %s\n", SDL_GetError());
         exit(1);
     }
 }

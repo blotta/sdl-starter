@@ -66,6 +66,44 @@ float vec2f_point_angle(vec2f* from, vec2f* to);
 
 vec2f* vec2f_rotated(vec2f* res, const vec2f* v, float angle);
 
+///////////////
+// collision //
+///////////////
+
+bool gu_collision_box_box_check(int32_t x1, int32_t y1, int32_t w1, int32_t h1, int32_t x2, int32_t y2, int32_t w2, int32_t h2);
+
+bool gu_collision_box_point_check(int32_t x1, int32_t y1, int32_t w1, int32_t h1, int32_t x2, int32_t y2);
+
+///////////
+// Event //
+///////////
+
+typedef struct {
+    size_t size;
+    void* data;
+} EventData;
+
+typedef struct {
+    void (*handleFunc)(EventData*);
+} EventListener;
+
+typedef struct {
+    char name[24];
+    EventListener listeners[10];
+    size_t listeners_length;
+} Event;
+
+void gu_event_init();
+void gu_event_deinit();
+
+void gu_event_register(const char* name);
+
+void gu_event_subscribe(const char* name, void* handleFunc);
+
+void gu_event_trigger(const char* name, EventData* eventData);
+
+void gu_event_invoke();
+
 //////////
 // move //
 //////////

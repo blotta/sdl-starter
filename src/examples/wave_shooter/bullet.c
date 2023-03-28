@@ -1,22 +1,8 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
-#include "game_utils.h"
 
-typedef struct {
-    vec2f pos;
-    vec2f vel;
-    float rot;
-    float lifetime;
-} Bullet;
+#include "main.h"
 
-typedef struct {
-    Bullet* bullets;
-    uint32_t capacity;
-    float bullet_lifetime;
-    float speed;
-    vec2f origin;
-    SDL_Texture* tex;
-} BulletPool;
 
 const char bulletFrames[1][8] = {
     {0x00, 0x00, 0x00, 0x3c, 0x3c, 0x00, 0x00, 0x00}
@@ -101,3 +87,8 @@ void bullets_draw(BulletPool* bullet_pool, SDL_Renderer* rend)
     }
 }
 
+
+void bullets_on_bullet_hit_enemy_event_handler(EventData* edata) {
+    BulletHitEnemyEventData* data = (BulletHitEnemyEventData*)edata;
+    printf("bullets handling bullet_hit_enemy event. Enemy:%x Bullet: %x Size: %d %d\n", data->enemy, data->bullet, data->size, sizeof(BulletHitEnemyEventData));
+}

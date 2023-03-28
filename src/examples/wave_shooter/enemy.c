@@ -1,17 +1,7 @@
 #include <SDL2/SDL.h>
 #include "game_utils.h"
 
-typedef struct {
-    vec2f pos;
-    vec2f dir;
-    vec2f size;
-    float speed;
-    SDL_Texture* tex;
-    float frame_timer;
-    float frames_per_sec;
-    uint8_t frame_index;
-    uint8_t frame_count;
-} Enemy;
+#include "main.h"
 
 #define ENEMY_FRAME_COUNT 2
 const char enemyframes[ENEMY_FRAME_COUNT][8] = {
@@ -72,7 +62,7 @@ void enemy_draw(Enemy* enemy, SDL_Renderer* rend)
         enemy->size.y
     };
     if(-1 == SDL_RenderCopyExF(rend, enemy->tex, &enemy_frame, &enemy_dest, 0, NULL, enemyflip)) {
-        fprintf(stderr, "SDL_RenderCopyF failed: %s\n", SDL_GetError());
+        printf("SDL_RenderCopyF failed: %s\n", SDL_GetError());
         exit(1);
     }
 }

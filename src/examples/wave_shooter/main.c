@@ -13,9 +13,8 @@
 #define SDL_UTILS_FONT_8X8_BASIC
 #include "sdl_utils.h"
 
-#include "player.h"
-#include "bullet.h"
-#include "enemy.h"
+#include "main.h"
+
 
 int main(int argc, char *argv[])
 {
@@ -36,13 +35,17 @@ int main(int argc, char *argv[])
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1,
         SDL_RENDERER_ACCELERATED);
 
+    gu_event_init();
+
+    gu_event_register("bullet_hit_enemy");
+
     Player player;
     player_create(&player, 50.f, 50.f, 20.f, 32.f, 32.f, 100.f, renderer);
     vec2f player_direction;
-    // vec2f player_velocity;
 
     BulletPool bullet_pool;
     bullets_init(&bullet_pool, 10, renderer);
+    gu_event_subscribe("bullet_hit_enemy", bullets_on_bullet_hit_enemy_event_handler);
 
     Enemy enemy;
     enemy_create(&enemy, 200.f, 200.f, 0, 24.f, 24.f, 50.f, renderer);
@@ -69,8 +72,10 @@ int main(int argc, char *argv[])
         sdlu_pollevents();
         running = !sdlu_input_requested_quit();
 
-        // Update
+        // game events
+        gu_event_invoke();
 
+        // Update
 
         player_direction = VEC2F_ZERO;
         if (sdlu_input_key_pressed(SDLK_w))
@@ -121,6 +126,19 @@ int main(int argc, char *argv[])
         // enemies
         enemy_update(&enemy, &player.pos, delta);
 
+
+        // collision
+        for (size_t i = 0; i < bullet_pool.capacity; i++) {
+            if (bullet_pool.bullets[i].lifetime <= 0)
+                continue;
+            Bullet* b = &bullet_pool.bullets[i];
+            if (gu_collision_box_point_check(enemy.pos.x, enemy.pos.y, enemy.size.x, enemy.size.y, b->pos.x, b->pos.y)) {
+                printf("Collided!\n");
+                BulletHitEnemyEventData edata = {.size = sizeof(BulletHitEnemyEventData), .enemy = &enemy, .bullet = b};
+                gu_event_trigger("bullet_hit_enemy", (EventData*)&edata);
+            }
+        }
+
         // Render
         SDL_SetRenderDrawColor(renderer, 0, 100, 100, 255);
         SDL_RenderClear(renderer);
@@ -155,6 +173,7 @@ int main(int argc, char *argv[])
     player_destroy(&player);
     enemy_destroy(&enemy);
 
+    gu_event_init();
     sdlu_input_mapper_deinit();
 
     SDL_DestroyRenderer(renderer);

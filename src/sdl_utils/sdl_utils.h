@@ -1,5 +1,4 @@
-#ifndef SDL_UTILS_H
-#define SDL_UTILS_H
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -56,7 +55,6 @@ void font_destroy(font_t* font);
 // draw text
 void draw_text(font_t* font, int32_t x, int32_t y, const char* str);
 
-#endif
 
 
 
