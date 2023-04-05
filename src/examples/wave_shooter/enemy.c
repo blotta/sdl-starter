@@ -23,6 +23,8 @@ void enemy_create(Enemy* enemy, float px, float py, float rot, float sx, float s
     enemy->frame_index = 0;
     enemy->frame_count = ENEMY_FRAME_COUNT;
 
+    enemy->health = 100;
+
     enemy->tex = data_to_texture(rend, (const char**)&enemyframes, 1, 8, ENEMY_FRAME_COUNT, 0x22, 0x22, 0x22);
 }
 
@@ -38,6 +40,11 @@ void enemy_update(Enemy* enemy, const vec2f* destination, float delta)
     vec2f vel = VEC2F_ZERO;
     vec2f_mult_i(&vel, &enemy->dir, enemy->speed * delta);
     vec2f_add(&enemy->pos, &enemy->pos, &vel);
+
+    if (enemy->health <= 0) {
+        enemy->pos = vec2f_create(600, 400);
+        enemy->health = 100;
+    }
 
     enemy->frame_timer -= delta;
     if (enemy->frame_timer <= 0) {

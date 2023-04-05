@@ -132,12 +132,15 @@ int main(int argc, char *argv[])
             if (bullet_pool.bullets[i].lifetime <= 0)
                 continue;
             Bullet* b = &bullet_pool.bullets[i];
-            if (gu_collision_box_point_check(enemy.pos.x, enemy.pos.y, enemy.size.x, enemy.size.y, b->pos.x, b->pos.y)) {
+            if (gu_collision_box_point_check(enemy.pos.x - enemy.size.x / 2, enemy.pos.y - enemy.size.y / 2, enemy.size.x, enemy.size.y, b->pos.x, b->pos.y)) {
                 printf("Collided!\n");
                 BulletHitEnemyEventData edata = {.size = sizeof(BulletHitEnemyEventData), .enemy = &enemy, .bullet = b};
                 gu_event_trigger("bullet_hit_enemy", (EventData*)&edata);
             }
+
         }
+
+        RaycastHitResult rayResult = gu_castray_point_box(&player.pos, &mouse, enemy.pos.x - enemy.size.x / 2, enemy.pos.y - enemy.size.y / 2, enemy.size.x, enemy.size.y, 100);
 
         // Render
         SDL_SetRenderDrawColor(renderer, 0, 100, 100, 255);
@@ -148,12 +151,24 @@ int main(int argc, char *argv[])
         enemy_draw(&enemy, renderer);
         bullets_draw(&bullet_pool, renderer);
 
+        if (rayResult.hasHit) {
+            SDL_FRect hitRect = {
+                .x = rayResult.hit.x,
+                .y = rayResult.hit.y,
+                .w = 3,
+                .h = 3
+            };
+            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+            SDL_RenderFillRectF(renderer, &hitRect);
+            
+        }
+
 
         // SDL_FRect bsr = {
-        //     .x = bullet_spawn.x,
-        //     .y = bullet_spawn.y,
-        //     .w = 2,
-        //     .h = 2
+        //     .x = enemy.pos.x - enemy.size.x / 2,
+        //     .y = enemy.pos.y - enemy.size.y / 2,
+        //     .w = enemy.size.x,
+        //     .h = enemy.size.y
         // };
         // SDL_SetRenderDrawColor(renderer, 200, 0, 0, 255);
         // SDL_RenderFillRectF(renderer, &bsr);

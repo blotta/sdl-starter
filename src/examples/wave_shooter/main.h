@@ -61,6 +61,7 @@ typedef struct {
     float frames_per_sec;
     uint8_t frame_index;
     uint8_t frame_count;
+    uint32_t health;
 } Enemy;
 
 void enemy_create(Enemy* enemy, float px, float py, float rot, float sx, float sy, float speed, SDL_Renderer* rend);

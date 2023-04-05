@@ -90,5 +90,7 @@ void bullets_draw(BulletPool* bullet_pool, SDL_Renderer* rend)
 
 void bullets_on_bullet_hit_enemy_event_handler(EventData* edata) {
     BulletHitEnemyEventData* data = (BulletHitEnemyEventData*)edata;
-    printf("bullets handling bullet_hit_enemy event. Enemy:%x Bullet: %x Size: %d %d\n", data->enemy, data->bullet, data->size, sizeof(BulletHitEnemyEventData));
+    // printf("bullets handling bullet_hit_enemy event. Enemy:%x Bullet: %x Size: %d %d\n", data->enemy, data->bullet, data->size, sizeof(BulletHitEnemyEventData));
+    data->bullet->lifetime = 0;
+    data->enemy->health -= 50;
 }

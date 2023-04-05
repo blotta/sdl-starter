@@ -70,9 +70,16 @@ vec2f* vec2f_rotated(vec2f* res, const vec2f* v, float angle);
 // collision //
 ///////////////
 
+typedef struct {
+    bool hasHit;
+    vec2f hit;
+} RaycastHitResult;
+
 bool gu_collision_box_box_check(int32_t x1, int32_t y1, int32_t w1, int32_t h1, int32_t x2, int32_t y2, int32_t w2, int32_t h2);
 
 bool gu_collision_box_point_check(int32_t x1, int32_t y1, int32_t w1, int32_t h1, int32_t x2, int32_t y2);
+
+RaycastHitResult gu_castray_point_box(vec2f* from, vec2f* to, int32_t bx, int32_t by, int32_t bw, int32_t bh, uint16_t resolution);
 
 ///////////
 // Event //
