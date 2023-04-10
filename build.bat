@@ -28,8 +28,22 @@ set r_build_dir=build\release
 :: Default to debug
 set cc=gcc
 set comp_flags=%d_comp_flags%
-set src=%project_src_dir%/*.c src/utils/*.c src/game_utils/*.c src/sdl_utils/*.c
-set link=-lm -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
+
+set "utils_srcs="
+for /r "src\utils" %%i in (*.c) do call set "utils_srcs=%%utils_srcs%% "%%i""
+
+set "gameutils_srcs="
+for /r "src\game_utils" %%i in (*.c) do call set "gameutils_srcs=%%gameutils_srcs%% "%%i""
+
+set "sdlutils_srcs="
+for /r "src\sdl_utils" %%i in (*.c) do call set "sdlutils_srcs=%%sdlutils_srcs%% "%%i""
+
+set "project_srcs="
+for /r "%project_src_dir%" %%i in (*.c) do call set "project_srcs=%%project_srcs%% "%%i""
+
+set src=%utils_srcs% %gameutils_srcs% %sdlutils_srcs% %project_srcs% 
+
+set link=-lm -lmingw32 -lSDL2main -lSDL2_image -lSDL2
 set build_dir=%d_build_dir%
 set include=-Ivendor/include -Isrc/utils -Isrc/game_utils -Isrc/sdl_utils
 set lib=-Lvendor/lib
