@@ -41,11 +41,6 @@ void enemy_update(Enemy* enemy, const vec2f* destination, float delta)
     vec2f_mult_i(&vel, &enemy->dir, enemy->speed * delta);
     vec2f_add(&enemy->pos, &enemy->pos, &vel);
 
-    if (enemy->health <= 0) {
-        enemy->pos = vec2f_create(600, 400);
-        enemy->health = 100;
-    }
-
     enemy->frame_timer -= delta;
     if (enemy->frame_timer <= 0) {
         enemy->frame_timer = 1.f / enemy->frames_per_sec;
