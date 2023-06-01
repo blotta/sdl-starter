@@ -26,6 +26,8 @@ void player_create(Player* player, float px, float py, float rot, float sx, floa
     player->size.y = sx;
     player->speed = speed;
     player->state = IDLE;
+    player->health = 100;
+    player->recover_timer = 0.f;
 
     player->tex = data_to_texture(rend, (const char**)&frames, 1, 8, PLAYER_FRAME_COUNT, 0xAA, 0xAA, 0xAA);
     player->guntex = data_to_texture(rend, (const char**)&gunframes, 1, 8, GUN_FRAME_COUNT, 0x33, 0x33, 0x33);
@@ -43,6 +45,11 @@ void player_draw(Player* player, SDL_Renderer* rend)
     float y_offset = 0;
     if (player->state == WALKING) {
         y_offset = 5.f * fabs(cos(0.01f * game_time_msnow()));
+    }
+
+    SDL_SetTextureColorMod(player->tex, 255, 255, 255);
+    if (player->recover_timer > 0 && (int)(player->recover_timer * 10) % 2 == 0 ) {
+        SDL_SetTextureColorMod(player->tex, 255, 0, 0);
     }
 
     SDL_Rect player_frame = {.x = 0, .y = 0, .w = 8, .h  = 8};
@@ -67,4 +74,11 @@ void player_destroy(Player* player)
 {
     SDL_DestroyTexture(player->tex);
     SDL_DestroyTexture(player->guntex);
+}
+
+void player_take_damage(Player* player, uint32_t amount) {
+    if (player->recover_timer <= 0) {
+        player->health -= amount;
+        player->recover_timer = 1.0f;
+    }
 }

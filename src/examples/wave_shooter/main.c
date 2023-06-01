@@ -2,10 +2,15 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#include <SDL2/SDL.h>
-// #include <SDL2/SDL_image.h>
 #include <time.h>
 #include <math.h>
+
+#include <SDL2/SDL.h>
+// #include <SDL2/SDL_image.h>
+
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 #include "utils.h"
 #include "game_utils.h"
@@ -15,7 +20,7 @@
 
 #include "main.h"
 
-const size_t MAX_ENEMIES = 25;
+const size_t MAX_ENEMIES = 100;
 
 
 int wave_reset_enemies(Enemy enemies[MAX_ENEMIES], int wave) {
@@ -78,7 +83,7 @@ int main(int argc, char *argv[])
 {
     srand(time(NULL));
 
-    if( SDL_Init(SDL_INIT_EVERYTHING) != 0 )
+    if( SDL_Init(SDL_INIT_VIDEO) != 0 )
         printf("SDL could not initialize! SDL_Error: %s\n",SDL_GetError());
 
     char title[128];
@@ -96,10 +101,12 @@ int main(int argc, char *argv[])
     gu_event_init();
 
     gu_event_register("bullet_hit_enemy");
+    gu_event_register("enemy_hit_player");
 
     Player player;
     player_create(&player, 1024.f / 2, 720.f / 2, 20.f, 32.f, 32.f, 100.f, renderer);
     vec2f player_direction;
+    gu_event_subscribe("enemy_hit_player", enemy_on_enemy_hit_player_event_handler);
 
     BulletPool bullet_pool;
     bullets_init(&bullet_pool, 10, renderer);
@@ -123,6 +130,9 @@ int main(int argc, char *argv[])
     sdlu_input_mapper_track(SDLK_d);
     sdlu_input_mapper_track(SDLK_SPACE);
 
+    // game
+    bool game_ended = false;
+
     // Loop
     int running = 1;
     game_time_init(60, SDL_GetTicks, SDL_Delay, true);
@@ -138,6 +148,25 @@ int main(int argc, char *argv[])
 
         // Update
 
+        // Game ended
+        if (player.health <= 0) {
+
+            if (sdlu_input_key_justpressed(SDLK_SPACE)) {
+                player.health = 100;
+                player.recover_timer = 0.f;
+                wave_count = 1;
+                wave_enemy_count = wave_reset_enemies(enemies, wave_count);
+            }
+
+            SDL_SetRenderDrawColor(renderer, 0, 100, 100, 255);
+            SDL_RenderClear(renderer);
+            draw_text(&font88, 30, 30, "GAME OVER! PRESS SPACE TO CONTINUE");
+            SDL_RenderPresent(renderer);
+
+            continue;
+        }
+
+        // normal game
         player_direction = VEC2F_ZERO;
         if (sdlu_input_key_pressed(SDLK_w))
             vec2f_add(&player_direction, &player_direction, &VEC2F_UP);
@@ -169,6 +198,7 @@ int main(int argc, char *argv[])
         // player.rot = desired_rot;
         player.rot = gu_lerp_anglef(player.rot, desired_rot, 1.5 * 360 * delta);
 
+
         vec2f bullet_spawn = vec2f_create(20.f, 0);
         vec2f_rotated(&bullet_spawn, &bullet_spawn, player.rot);
         vec2f_add(&bullet_spawn, &bullet_spawn, &player.pos);
@@ -176,10 +206,16 @@ int main(int argc, char *argv[])
         vec2f* shoot_dir_ptr = NULL;
         vec2f shoot_dir = (vec2f){.x = cos(d2r(player.rot)), .y = sin(d2r(player.rot))};
         vec2f_normalize(&shoot_dir);
-        if (sdlu_input_mouse_justpressed(SDL_BUTTON_LEFT)) {
+        if (player.recover_timer <= 0 && sdlu_input_mouse_justpressed(SDL_BUTTON_LEFT)) {
             shoot_dir_ptr = &shoot_dir;
         }
 
+        if (player.recover_timer >= 0) {
+            player.recover_timer -= delta;
+            if (player.recover_timer < 0) player.recover_timer = 0.f;
+        }
+
+        // bullets
         bullets_update(&bullet_pool, &bullet_spawn, shoot_dir_ptr, delta);
 
         // enemies
@@ -212,6 +248,21 @@ int main(int argc, char *argv[])
                 }
             }
 
+        }
+
+        for (size_t i = 0; i < MAX_ENEMIES; i++) {
+            Enemy* enemy = &enemies[i];
+            if (enemy->health <= 0) continue;
+            if (gu_collision_box_box_check(
+                enemy->pos.x - enemy->size.x / 2, enemy->pos.y - enemy->size.y / 2,
+                enemy->size.x, enemy->size.y,
+                player.pos.x - player.size.x / 2, player.pos.y - player.size.y / 2,
+                player.size.x, player.size.y)) {
+                    printf("Enemy attacked!\n");
+                EnemyHitPlayerEventData edata = {.size = sizeof(EnemyHitPlayerEventData), .enemy = enemy, .player = &player};
+                gu_event_trigger("enemy_hit_player", (EventData*)&edata);
+
+            }
         }
 
         // RaycastHitResult rayResult = gu_castray_point_box(&player.pos, &mouse, enemy.pos.x - enemy.size.x / 2, enemy.pos.y - enemy.size.y / 2, enemy.size.x, enemy.size.y, 100);
@@ -252,12 +303,14 @@ int main(int argc, char *argv[])
         // SDL_RenderFillRectF(renderer, &bsr);
 
         char msg_buff[64];
-        sprintf_s(msg_buff, 64, "X: %.2f Y: %.2f ROT: %.2f DESROT: %.2f", player.pos.x, player.pos.y, player.rot, desired_rot);
+        sprintf(msg_buff, "X: %.2f Y: %.2f ROT: %.2f DESROT: %.2f", player.pos.x, player.pos.y, player.rot, desired_rot);
         draw_text(&font88, 10, 10, msg_buff);
-        sprintf_s(msg_buff, 64, "WAVE: %d ENEMIES: %d/%d/%d", wave_count, enemies_left, wave_enemy_count, MAX_ENEMIES);
+        sprintf(msg_buff, "WAVE: %d ENEMIES: %d/%d/%zu", wave_count, enemies_left, wave_enemy_count, MAX_ENEMIES);
         draw_text(&font88, 10, 20, msg_buff);
-        sprintf_s(msg_buff, 64, "FPS: %d", game_fps());
+        sprintf(msg_buff, "FPS: %d", game_fps());
         draw_text(&font88, 1024 - 100, 10, msg_buff);
+        sprintf(msg_buff, "HEALTH: %d", player.health);
+        draw_text(&font88, 1024 - 100, 20, msg_buff);
 
         // Swap
         SDL_RenderPresent(renderer);

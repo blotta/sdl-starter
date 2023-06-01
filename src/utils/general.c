@@ -12,5 +12,5 @@
 #endif
 
 void get_build_str(char* str, size_t size) {
-    sprintf_s(str, size, "%s v%s", BUILD_TARGET, VERSION);
+    sprintf(str, "%s v%s", BUILD_TARGET, VERSION);
 }

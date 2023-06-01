@@ -21,7 +21,7 @@ set d_comp_flags=-g -std=c11 -Wall -Wno-unused-variable -DDEBUG
 set d_build_dir=build\debug
 
 :: Release Config
-set r_comp_flags=-std=c11 -Wall -Werror -O3 -DNDEBUG
+set r_comp_flags=-std=c11 -Wall -Werror -O2 -DNDEBUG
 set r_build_dir=build\release
 
 
@@ -48,13 +48,21 @@ set build_dir=%d_build_dir%
 set include=-Ivendor/include -Isrc/utils -Isrc/game_utils -Isrc/sdl_utils
 set lib=-Lvendor/lib
 
+
 if "%target%" == "release" (call :SetTargetToRelease)
 if "%1" == "release" (call :SetTargetToRelease)
 if "%1" == "debug" (call :SetTargetToDebug)
 
 set executable_path=%build_dir%\game.exe
-set compile_cmd=%cc% %comp_flags% %src% -o %executable_path% %include% %lib% %link%
 
+@REM emscripten changes (uncomment to use)
+rem set cc=emcc -D_GNU_SOURCE -sUSE_SDL=2 -sUSE_SDL_IMAGE=2
+rem set link=-lm -lSDL2_image -lSDL2
+rem set lib=
+rem set executable_path=%build_dir%\index.html
+
+
+set compile_cmd=%cc% %comp_flags% %src% -o %executable_path% %include% %lib% %link%
 
 :: Summary
 @REM echo TARGET: %target%

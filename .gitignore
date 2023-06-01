@@ -6,3 +6,5 @@ vendor/lib/*
 vendor/bin/*
 *.dll
 build/*
+
+dir.locals*

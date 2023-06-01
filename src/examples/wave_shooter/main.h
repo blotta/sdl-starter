@@ -8,7 +8,9 @@
 // PLAYER
 typedef enum {
     IDLE = 0,
-    WALKING
+    WALKING,
+    DAMAGED_IDLE,
+    DAMAGED_WALKING,
 } Player_State;
 
 typedef struct {
@@ -19,11 +21,14 @@ typedef struct {
     Player_State state;
     SDL_Texture* tex;
     SDL_Texture* guntex;
+    uint32_t health;
+    float recover_timer;
 } Player;
 
 void player_create(Player* player, float px, float py, float rot, float sx, float sy, float speed, SDL_Renderer* rend);
 void player_draw(Player* player, SDL_Renderer* rend);
 void player_destroy(Player* player);
+void player_take_damage(Player* player, uint32_t amount);
 
 
 // BULLETS
@@ -69,7 +74,7 @@ void enemy_create(Enemy* enemy, float px, float py, float rot, float sx, float s
 void enemy_destroy(Enemy* enemy);
 void enemy_update(Enemy* enemy, const vec2f* destination, float delta);
 void enemy_draw(Enemy* enemy, SDL_Renderer* rend);
-
+void enemy_on_enemy_hit_player_event_handler(EventData* edata);
 
 
 // EVENTS
@@ -78,3 +83,9 @@ typedef struct {
     Enemy* enemy;
     Bullet* bullet;
 } BulletHitEnemyEventData;
+
+typedef struct {
+    size_t size;
+    Enemy* enemy;
+    Player* player;
+} EnemyHitPlayerEventData;

@@ -69,3 +69,10 @@ void enemy_draw(Enemy* enemy, SDL_Renderer* rend)
     }
 }
 
+
+void enemy_on_enemy_hit_player_event_handler(EventData* edata) {
+    EnemyHitPlayerEventData* data = (EnemyHitPlayerEventData*)edata;
+    
+    printf("Enemy attacked event!\n");
+    player_take_damage(data->player, 5);
+}
