@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include "utils.h"
 
-#ifdef DEBUG
+// #ifdef DEBUG
+#ifdef SDLST_DEBUG
 #define BUILD_TARGET "Debug"
 #else
 #define BUILD_TARGET "Release"

@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 // #include <SDL2/SDL_image.h>
 #include <time.h>
 #include <math.h>
@@ -9,7 +9,7 @@
 #include "game_utils.h"
 
 #define SDL_UTILS_FONT_8X8_BASIC
-#include "sdl_utils.h"
+#include "sdl_sauce.h"
 
 #include "snake.h"
 

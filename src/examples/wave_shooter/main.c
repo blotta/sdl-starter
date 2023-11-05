@@ -5,7 +5,7 @@
 #include <time.h>
 #include <math.h>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 // #include <SDL2/SDL_image.h>
 
 #ifdef __EMSCRIPTEN__
@@ -16,11 +16,12 @@
 #include "game_utils.h"
 
 #define SDL_UTILS_FONT_8X8_BASIC
-#include "sdl_utils.h"
+#include "sdl_sauce.h"
 
 #include "main.h"
 
-const size_t MAX_ENEMIES = 100;
+// const size_t MAX_ENEMIES = 100;
+#define MAX_ENEMIES 100
 
 
 int wave_reset_enemies(Enemy enemies[MAX_ENEMIES], int wave) {

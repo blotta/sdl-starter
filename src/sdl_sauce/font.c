@@ -1,5 +1,4 @@
-#include "game_utils.h"
-#include "sdl_utils.h"
+#include "sdl_sauce.h"
 
 const int FONT_PRINTABLE_START = 32;
 

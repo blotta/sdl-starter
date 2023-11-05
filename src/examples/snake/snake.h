@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 typedef enum {
     UP = 1, DOWN, LEFT, RIGHT

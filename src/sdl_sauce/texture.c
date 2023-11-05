@@ -1,5 +1,4 @@
-#include "sdl_utils.h"
-#include "game_utils.h"
+#include "sdl_sauce.h"
 
 SDL_Texture* data_to_texture(
     SDL_Renderer* rend,

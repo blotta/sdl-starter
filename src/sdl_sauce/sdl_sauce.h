@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 
 // Maps data to pixels in a SDL_Texture

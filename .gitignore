@@ -1,10 +1,18 @@
 .vs
 .vscode
 
-vendor/include/*
-vendor/lib/*
-vendor/bin/*
+gen/
+bin/
+bin-int/
+
+vendor/*
 *.dll
-build/*
 
 dir.locals*
+
+*.user
+*.sln
+*.vcxproj
+*.vcxproj.*
+
+Makefile

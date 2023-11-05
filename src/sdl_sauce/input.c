@@ -1,5 +1,4 @@
-#include "sdl_utils.h"
-#include "game_utils.h"
+#include "sdl_sauce.h"
 
 typedef struct {
     SDL_KeyCode key; // char

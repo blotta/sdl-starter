@@ -1,9 +1,9 @@
 #pragma once
 
 #include "math.h"
-#include "SDL2/SDL.h"
+#include "SDL.h"
 #include "game_utils.h"
-#include "sdl_utils.h"
+#include "sdl_sauce.h"
 
 // PLAYER
 typedef enum {
