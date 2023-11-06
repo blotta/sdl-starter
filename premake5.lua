@@ -83,7 +83,9 @@ project "sdl_sauce"
             "SDL_SAUCE_PLATFORM_WINDOWS"
         }
 
-project "wave_shooter"
+group "examples"
+
+project 'snake'
     location "src/examples/%{prj.name}"
     kind "ConsoleApp"
     language "C"
@@ -114,3 +116,100 @@ project "wave_shooter"
     -- {
     --     "{COPYFILE} " .. sdl_location .."/lib/x64/SDL2.dll %{cfg.buildtarget.directory}SDL2.dll"
     -- }
+
+project 'follower'
+    location "src/examples/%{prj.name}"
+    kind "ConsoleApp"
+    language "C"
+    dependson "sdl_sauce"
+
+    targetdir ("bin/" .. outputdir .. "%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "%{prj.name}")
+
+    files
+    {
+        "src/examples/%{prj.name}/**.h",
+        "src/examples/%{prj.name}/**.c",
+    }
+
+    libdirs { sdl_location .. "/lib/x64" }
+
+    includedirs { sdl_location .. "/include", "src/sauce/utils", "src/sauce/game_utils", "src/sdl_sauce"}
+
+    links { "sauce", "sdl_sauce", "SDL2", "SDL2main" }
+
+    filter "system:windows"
+        cdialect "C11"
+        staticruntime "On"
+        systemversion "latest"
+
+    -- TODO: fix issue when copying runtime
+    -- postbuildcommands
+    -- {
+    --     "{COPYFILE} " .. sdl_location .."/lib/x64/SDL2.dll %{cfg.buildtarget.directory}SDL2.dll"
+    -- }
+
+project 'wave_shooter'
+    location "src/examples/%{prj.name}"
+    kind "ConsoleApp"
+    language "C"
+    dependson "sdl_sauce"
+
+    targetdir ("bin/" .. outputdir .. "%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "%{prj.name}")
+
+    files
+    {
+        "src/examples/%{prj.name}/**.h",
+        "src/examples/%{prj.name}/**.c",
+    }
+
+    libdirs { sdl_location .. "/lib/x64" }
+
+    includedirs { sdl_location .. "/include", "src/sauce/utils", "src/sauce/game_utils", "src/sdl_sauce"}
+
+    links { "sauce", "sdl_sauce", "SDL2", "SDL2main" }
+
+    filter "system:windows"
+        cdialect "C11"
+        staticruntime "On"
+        systemversion "latest"
+
+    -- TODO: fix issue when copying runtime
+    -- postbuildcommands
+    -- {
+    --     "{COPYFILE} " .. sdl_location .."/lib/x64/SDL2.dll %{cfg.buildtarget.directory}SDL2.dll"
+    -- }
+
+project 'sdl_gl'
+    location "src/examples/%{prj.name}"
+    kind "ConsoleApp"
+    language "C"
+    dependson "sdl_sauce"
+
+    targetdir ("bin/" .. outputdir .. "%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "%{prj.name}")
+
+    files
+    {
+        "src/examples/%{prj.name}/**.h",
+        "src/examples/%{prj.name}/**.c",
+    }
+
+    libdirs { sdl_location .. "/lib/x64" }
+
+    includedirs { sdl_location .. "/include", "src/sauce/utils", "src/sauce/game_utils", "src/sdl_sauce"}
+
+    links { "sauce", "sdl_sauce", "SDL2", "SDL2main", "opengl32" }
+
+    filter "system:windows"
+        cdialect "C11"
+        staticruntime "On"
+        systemversion "latest"
+
+    -- TODO: fix issue when copying runtime
+    -- postbuildcommands
+    -- {
+    --     "{COPYFILE} " .. sdl_location .."/lib/x64/SDL2.dll %{cfg.buildtarget.directory}SDL2.dll"
+    -- }
+group ""
